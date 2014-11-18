@@ -1,6 +1,9 @@
-#include "stagesettingdialog.h"
+﻿#include "stagesettingdialog.h"
 #include "ui_stagesettingdialog.h"
 #include "printpanel/stagewidget.h"
+#include "settingDialog/sigmasetitngwidget.h"
+#include "settingDialog/technohandssettingwidget.h"
+#include "EnumList.h"
 
 #include <QSerialPortInfo>
 #include <QDebug>
@@ -8,13 +11,7 @@
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QJsonObject>
-
-const QString xKey = "xaxis";
-const QString yKey = "yaxis";
-const QString zKey = "zaxis";
-const QString thetaKey = "thetaaxis";
-const QString phiKey = "phiaxis";
-const QString shutterKey = "shutter";
+#include <QStackedWidget>
 
 void setSerialComboBoxButton(QString *name, QComboBox *box);
 
@@ -22,46 +19,26 @@ StageSettingDialog::StageSettingDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StageSettingDialog)
 {
-
     ui->setupUi(this);
 
-    initialTabs();
+    sigmaWidget = new SigmaSetitngWidget;
+    ui->stackedWidget->addWidget(sigmaWidget);
+
+    technoWidget = new TechnohandsSettingWidget;
+    ui->stackedWidget->addWidget(technoWidget);
+
+    shutterWidget = new StageWidget;
+    ui->stackedWidget->addWidget(shutterWidget);
+
+    connect(ui->settingComboBox, SIGNAL(currentIndexChanged(int)),
+            ui->stackedWidget, SLOT(setCurrentIndex(int)));
+
 }
+
 
 StageSettingDialog::~StageSettingDialog()
 {
     delete ui;
-}
-
-void StageSettingDialog::initialTabs()
-{
-
-    xAxisWidget = createTabWithTitle(tr("X軸"));
-    yAxisWidget = createTabWithTitle(tr("Y軸"));
-    zAxisWidget = createTabWithTitle(tr("Z軸"));
-    thetaAxisWidget = createTabWithTitle(tr("θ軸"));
-    phiAxisWidget = createTabWithTitle(tr("Φ軸"));
-    shutterWidget = createTabWithTitle(tr("シャッター"));
-}
-
-StageWidget* StageSettingDialog::createTabWithTitle(QString title)
-{
-
-    StageWidget *aTabWidget = new StageWidget();
-    ui->tabWidget->addTab(aTabWidget, QIcon(), title);
-    connect(aTabWidget->dialogButtonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButtonBoxClicked(QAbstractButton*)));
-    return aTabWidget;
-}
-
-void StageSettingDialog::onButtonBoxClicked(QAbstractButton *button)
-{
-    if (button->text() == "OK")
-    {
-        saveStageSettingss(StageSettingDialog::Json);
-        emit applySettings();
-    }
-
-    this->close();
 }
 
 bool StageSettingDialog::saveStageSettingss(SaveFormat saveFormat) const
@@ -91,11 +68,8 @@ bool StageSettingDialog::saveStageSettingss(SaveFormat saveFormat) const
 
 void StageSettingDialog::read(const QJsonObject &json)
 {
-    xAxisWidget->read(json[xKey].toObject());
-    yAxisWidget->read(json[yKey].toObject());
-    zAxisWidget->read(json[zKey].toObject());
-    thetaAxisWidget->read(json[thetaKey].toObject());
-    phiAxisWidget->read(json[phiKey].toObject());
+    sigmaWidget->read(json[sigmaKey].toObject());
+    technoWidget->read(json[technoKey].toObject());
     shutterWidget->read(json[shutterKey].toObject());
 }
 
@@ -103,19 +77,24 @@ void StageSettingDialog::read(const QJsonObject &json)
 void StageSettingDialog::write(QJsonObject &json) const
 {
 
-    QJsonObject xAxisObject, yAxisObject, zAxisObject,
-            thetaAxisObject, phiAxisObject, shutterObject;
-    xAxisWidget->write(xAxisObject);
-    yAxisWidget->write(yAxisObject);
-    zAxisWidget->write(zAxisObject);
-    thetaAxisWidget->write(thetaAxisObject);
-    phiAxisWidget->write(phiAxisObject);
+    QJsonObject technoObject, sigmaObject, shutterObject;
+    sigmaWidget->write(sigmaObject);
+    technoWidget->write(technoObject);
     shutterWidget->write(shutterObject);
 
-    json[xKey] = xAxisObject;
-    json[yKey] = yAxisObject;
-    json[zKey] = zAxisObject;
-    json[thetaKey] = thetaAxisObject;
-    json[phiKey] = phiAxisObject;
+    json[sigmaKey] = sigmaObject;
+    json[technoKey] = technoObject;
     json[shutterKey] = shutterObject;
+}
+
+void StageSettingDialog::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if (button->text() == "OK")
+    {
+        saveStageSettingss(StageSettingDialog::Json);
+        emit applySettings();
+    }
+
+    this->close();
+
 }

@@ -26,15 +26,18 @@ SOURCES += main.cpp\
     printpanel/shutter.cpp \
     convert/convertpanel.cpp \
     editor/editorpanel.cpp \
-    graphic/graphicswidget.cpp \
     graphicwidget.cpp \
-    graphic/giqglviewer.cpp
+    graphic/giqglviewer.cpp \
+    model/lines.cpp \
+    settingDialog/sigmasetitngwidget.cpp \
+    settingDialog/technohandssettingwidget.cpp \
+    printpanel/technostage.cpp \
+    printpanel/sigmastage.cpp
 
 HEADERS  += mainwindow.h \
     settingDialog/stagesettingdialog.h \
     printpanel/stagewidget.h \
     printpanel/printpanel.h \
-    enumList.h \
     printpanel/stagecontroller.h \
     model/gcode.h \
     model/responseanalyzer.h \
@@ -42,16 +45,22 @@ HEADERS  += mainwindow.h \
     printpanel/shutter.h \
     convert/convertpanel.h \
     editor/editorpanel.h \
-    graphic/graphicswidget.h \
     graphicwidget.h \
     EnumList.h \
-    graphic/giqglviewer.h
+    graphic/giqglviewer.h \
+    model/lines.h \
+    settingDialog/sigmasetitngwidget.h \
+    settingDialog/technohandssettingwidget.h \
+    printpanel/technostage.h \
+    printpanel/sigmastage.h
 
 FORMS    += mainwindow.ui \
     settingDialog/stagesettingdialog.ui \
     printpanel/printpanel.ui \
     convert/convertpanel.ui \
     editor/editorpanel.ui \
+    settingDialog/sigmasetitngwidget.ui \
+    settingDialog/technohandssettingwidget.ui
 
 ### setting
 ### Unix configuration ###

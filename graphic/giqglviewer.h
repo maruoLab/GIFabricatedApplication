@@ -3,6 +3,7 @@
 
 #include <QGLViewer/qglviewer.h>
 #include "model/gcode.h"
+#include "model/lines.h"
 
 class GIQGLViewer : public QGLViewer
 {
@@ -10,8 +11,13 @@ class GIQGLViewer : public QGLViewer
 public:
     explicit GIQGLViewer(QWidget *parent = 0);
 
+    void drawLines(QList<GCode*> lines);
+//    void changeCurrBlockNumber(int blockNumber);
+
+    void setCurrBlockNumber(int currBlockNumber);
+
 protected:
-//    virtual void fastDraw();
+    //    virtual void fastDraw();
     virtual void draw();
     virtual void init();
     virtual void animate();
@@ -20,10 +26,8 @@ private:
     void initCamera();
 
     QList<GCode*> _gcodeList;
-signals:
-
-public slots:
-    void drawLines(QList<GCode*> lines);
+    Lines *lineList;
+    int _currBlockNumber;
 };
 
 #endif // GIQGLVIEWER_H

@@ -1,4 +1,4 @@
-#ifndef STAGE_H
+﻿#ifndef STAGE_H
 #define STAGE_H
 
 #include <QSerialPort>
@@ -18,14 +18,6 @@ public:
     Stage();
     Stage(EnumList::Axis stageAxis);
 
-    // control Stage command
-    QString sendCommandDirectly(QString &cmd);
-    void moveAbsolute(float val);
-    void moveRelative(float val);
-    void moveHome();
-    void stop();
-    float getCurrentPosition();
-
     // setting
     void read(const QJsonObject &json);
     bool openSerialPort();
@@ -39,18 +31,14 @@ public:
     QSerialPort::Parity parity;
     QSerialPort::StopBits stopbits;
 
-    EnumList::Company company;
     EnumList::Axis axis;
     QString axisString;
 
-signals:
-    void sendDebugMessage(QString s);
-
-private:
-    bool couldOpenSerialPort;
-    const QString errorString;
     ResponseAnalyzer *res;
 
+protected:
+    bool couldOpenSerialPort;
+    const QString errorString;
 };
 
 #endif // STAGE_H

@@ -1,6 +1,8 @@
-#include "stagecontroller.h"
+﻿#include "stagecontroller.h"
 #include "enumList.h"
 #include "model/responseanalyzer.h"
+#include "sigmastage.h"
+#include "technostage.h"
 #include "stage.h"
 #include "shutter.h"
 
@@ -10,44 +12,112 @@
 StageController::StageController(QObject *parent) :
     QObject(parent)
 {
-    xStage = new Stage(EnumList::x);
-    connect(xStage, SIGNAL(sendDebugMessage(QString)), this, SLOT(receiveDebugMessage(QString)));
-
-    yStage = new Stage(EnumList::y);
-    connect(yStage, SIGNAL(sendDebugMessage(QString)), this, SLOT(receiveDebugMessage(QString)));
-
-    shutter = new Shutter(this);
 }
 
 StageController::~StageController()
 {
-    delete xStage;
-    delete yStage;
+    delete phiStage;
+    delete zSupplyStage;
+    delete thetaSupplyStage;
     delete shutter;
 }
 
 void StageController::loadStageSettings(const QJsonObject &json)
 {
-    xStage->read(json["xaxis"].toObject());
-    yStage->read(json["yaxis"].toObject());
-    shutter->read(json["shutter"].toObject());
+    QJsonObject sigmaJson,phiJson, zsJson, thetasJson, shutterJson;
+    sigmaJson   = json[sigmaKey].toObject();
+    phiJson     = json[technoKey].toObject()[phiKey].toObject();
+    zsJson      = json[technoKey].toObject()[zSuppliedKey].toObject();
+    thetasJson  = json[technoKey].toObject()[thetaSuppliedKey].toObject();
+    shutterJson = json[shutterKey].toObject();
+
+    if ( sigmaJson[axis1Key].toInt() != 0 |
+         sigmaJson[axis2Key].toInt() != 0 |
+         sigmaJson[axis3Key].toInt() != 0 |
+         sigmaJson[axis4Key].toInt() != 0
+        )
+    {
+        sigmaStage = new SigmaStage();
+        sigmaStage->readAxis(sigmaJson);
+//        sigmaStage->read(sigmaJson);
+    }else
+        sigmaStage = NULL;
+
+    if (!(Qt::CheckState)phiJson[disableKey].toInt())
+    {
+        phiStage = new TechnoStage();
+        phiStage->read(phiJson);
+    }else
+        phiStage = NULL;
+
+    if (!(Qt::CheckState)zsJson[disableKey].toInt())
+    {
+        zSupplyStage = new TechnoStage();
+        zSupplyStage->read(zsJson);
+    }else
+        zSupplyStage = NULL;
+
+    if (!(Qt::CheckState)thetasJson[disableKey].toInt())
+    {
+        thetaSupplyStage = new TechnoStage();
+        thetaSupplyStage->read(thetasJson);
+    }else
+        thetaSupplyStage = NULL;
+
+    if (!(Qt::CheckState)shutterJson[disableKey].toInt())
+    {
+        shutter = new Shutter();
+        shutter->read(shutterJson);
+    }else
+        shutter = NULL;
 }
 
 QMap<int, QString> StageController::canOpenStages()
 {
     QMap<int, QString> map;
-    if (xStage->openSerialPort())
-        map.insert(EnumList::x, xStage->portName);
-    else
-        map.insert(EnumList::x, QString("Not connecting"));
+    if (sigmaStage)
+    {
+        if (sigmaStage->openSerialPort())
+            map.insert(EnumList::sigma, sigmaStage->portName);
+        else
+            map.insert(EnumList::sigma, QString("Not connecting"));
+    }else
+        map.insert(EnumList::sigma, QString("Not connecting"));
 
-    if (yStage->openSerialPort())
-        map.insert(EnumList::y, yStage->portName);
-    else
-        map.insert(EnumList::y, QString("Not connecting"));
-    if (shutter->openSerialPort())
-        map.insert(EnumList::shutter, shutter->portName);
-    else
+    if (zSupplyStage)
+    {
+        if (zSupplyStage->openSerialPort())
+            map.insert(EnumList::zSupply, zSupplyStage->portName);
+        else
+            map.insert(EnumList::zSupply, QString("Not connecting"));
+    }else
+        map.insert(EnumList::zSupply, QString("Not connecting"));
+
+    if (thetaSupplyStage)
+    {
+        if (thetaSupplyStage->openSerialPort())
+            map.insert(EnumList::thetaSupply, thetaSupplyStage->portName);
+        else
+            map.insert(EnumList::thetaSupply, QString("Not connecting"));
+    }else
+        map.insert(EnumList::thetaSupply, QString("Not connecting"));
+
+    if (phiStage)
+    {
+        if (phiStage->openSerialPort())
+            map.insert(EnumList::phi, phiStage->portName);
+        else
+            map.insert(EnumList::phi, QString("Not connecting"));
+    }else
+        map.insert(EnumList::phi, QString("Not connecting"));
+
+    if (shutter)
+    {
+        if (shutter->openSerialPort())
+            map.insert(EnumList::shutter, shutter->portName);
+        else
+            map.insert(EnumList::shutter, QString("Not connecting"));
+    }else
         map.insert(EnumList::shutter, QString("Not connecting"));
 
     return map;
@@ -55,16 +125,17 @@ QMap<int, QString> StageController::canOpenStages()
 
 void StageController::getStagePositions(EnumList::Axis axis)
 {
-    switch (axis) {
-    case EnumList::x:
-
-        x = xStage->getCurrentPosition();
-        break;
-    case EnumList::y:
-        y = yStage->getCurrentPosition();
-        break;
-    default:
-        break;
+    if ( axis == EnumList::phi)
+    {
+        phi = phiStage->getCurrentPosition();
+    }
+    else
+    {
+        sigmaPositionMap = sigmaStage->getCurrentPosition();
+        x = sigmaPositionMap[EnumList::x];
+        y = sigmaPositionMap[EnumList::y];
+        z = sigmaPositionMap[EnumList::z];
+        theta = sigmaPositionMap[EnumList::theta];
     }
 }
 
@@ -72,36 +143,50 @@ void StageController::moveHome(EnumList::Axis axis)
 {
     switch (axis) {
     case EnumList::x:
-
-        xStage->moveHome();
+        sigmaStage->moveHomeCommand(axis);
+        sigmaStage->performCommand();
         break;
     case EnumList::y:
-        yStage->moveHome();
+        sigmaStage->moveHomeCommand(axis);
+        sigmaStage->performCommand();
+        break;
+    case EnumList::z:
+        sigmaStage->moveHomeCommand(axis);
+        sigmaStage->performCommand();
+        break;
+    case EnumList::theta:
+        sigmaStage->moveHomeCommand(axis);
+        sigmaStage->performCommand();
+        break;
+    case EnumList::phi:
+        phiStage->moveHome();
         break;
     default:
         break;
     }
-
 }
 
 void StageController::move(EnumList::Axis axis, float value, bool isAbsolute)
 {
-    switch (axis) {
-    case EnumList::x:
+    if (axis == EnumList::phi)
+    {
         if (isAbsolute)
-            xStage->moveAbsolute(value);
+            phiStage->moveAbsolute(value);
         else
-            xStage->moveRelative(value);
-        break;
-    case EnumList::y:
+            phiStage->moveRelative(value);
+    }else
+    {
         if (isAbsolute)
-            yStage->moveAbsolute(value);
+        {
+            qDebug() << "move Absolute";
+            sigmaStage->moveAbsoluteCommand(value, axis);
+        }
         else
-            yStage->moveRelative(value);
-        break;
-
-    default:
-        break;
+        {
+            qDebug() << "move Relative";
+            sigmaStage->moveRelativeCommand(value, axis);
+        }
+        sigmaStage->performCommand();
     }
 }
 
@@ -111,32 +196,43 @@ void StageController::pressTheShutter(bool isOpen)
     else shutter->close();
 }
 
-/* SLOTS */
-
-void StageController::receiveLineEditText(const QString s)
+void StageController::supplyAction()
 {
-    QString request = s;
-    xStage->sendCommandDirectly(request);
+    qDebug() << "Supply action coming soon...";
 }
+
+void StageController::stopStages()
+{
+    if (sigmaStage)
+        sigmaStage->stop();
+}
+
+/* SLOTS */
 
 void StageController::receiveRequest(const QString s, EnumList::Axis axis)
 {
     QString request = s;
     switch (axis) {
     case EnumList::x:
-        xStage->sendCommandDirectly(request);
+        sigmaStage->sendCommandDirectly(request);
         break;
     case EnumList::y:
-        yStage->sendCommandDirectly(request);
+        sigmaStage->sendCommandDirectly(request);
         break;
     case EnumList::z:
-
+        sigmaStage->sendCommandDirectly(request);
         break;
     case EnumList::theta:
-
+        sigmaStage->sendCommandDirectly(request);
         break;
     case EnumList::phi:
-
+        phiStage->sendCommandDirectly(request);
+        break;
+    case EnumList::zSupply:
+        zSupplyStage->sendCommandDirectly(request);
+        break;
+    case EnumList::thetaSupply:
+        thetaSupplyStage->sendCommandDirectly(request);
         break;
     default:
         break;

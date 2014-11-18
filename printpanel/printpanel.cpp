@@ -1,4 +1,4 @@
-#include "printpanel.h"
+﻿#include "printpanel.h"
 #include "ui_printpanel.h"
 
 #include <QDebug>
@@ -26,8 +26,8 @@ void PrintPanel::on_sendRequestButton_clicked()
     {
         switch (gc->g) {
         case 1:
-            if (gc->hasX()) stageManager.move(EnumList::x, gc->x, false);
-            if (gc->hasY()) stageManager.move(EnumList::y, gc->y, false);
+//            if (gc->hasX()) stageManager.move(EnumList::x, gc->x, false);
+//            if (gc->hasY()) stageManager.move(EnumList::y, gc->y, false);
             break;
         default:
             break;
@@ -42,11 +42,37 @@ void PrintPanel::on_sendRequestButton_clicked()
 void PrintPanel::on_cpX_clicked()
 {
     stageManager.getStagePositions(EnumList::x);
-    ui->positionX->setText(QString::number(stageManager.x));
+    setSigmaCurrentPositionLabel();
 };
 
 void PrintPanel::on_cpY_clicked()
 {
     stageManager.getStagePositions(EnumList::y);
-    ui->positionY->setText(QString::number(stageManager.y));
+    setSigmaCurrentPositionLabel();
 };
+
+void PrintPanel::on_cpZ_clicked()
+{
+    stageManager.getStagePositions(EnumList::z);
+    setSigmaCurrentPositionLabel();
+}
+
+void PrintPanel::on_cpTheta_clicked()
+{
+    stageManager.getStagePositions(EnumList::theta);
+    setSigmaCurrentPositionLabel();
+}
+
+void PrintPanel::on_cpPhi_clicked()
+{
+    stageManager.getStagePositions(EnumList::phi);
+    ui->positionPhi->setText(QString::number(stageManager.phi));
+}
+
+void PrintPanel::setSigmaCurrentPositionLabel()
+{
+    ui->positionX->setText(QString::number(stageManager.x));
+    ui->positionY->setText(QString::number(stageManager.y));
+    ui->positionZ->setText(QString::number(stageManager.z));
+    ui->positionTheta->setText(QString::number(stageManager.theta));
+}

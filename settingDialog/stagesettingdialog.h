@@ -1,4 +1,4 @@
-#ifndef STAGESETTINGDIALOG_H
+﻿#ifndef STAGESETTINGDIALOG_H
 #define STAGESETTINGDIALOG_H
 
 #include <QDialog>
@@ -7,6 +7,8 @@
 #include <QSerialPort>
 
 class StageWidget;
+class SigmaSetitngWidget;
+class TechnohandsSettingWidget;
 class QComboBox;
 
 namespace Ui {
@@ -42,20 +44,14 @@ signals:
     void applySettings();
 
 private slots:
-    void onButtonBoxClicked(QAbstractButton *button);
+    void on_buttonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::StageSettingDialog *ui;
 
-    StageWidget *xAxisWidget;
-    StageWidget *yAxisWidget;
-    StageWidget *zAxisWidget;
-    StageWidget *thetaAxisWidget;
-    StageWidget *phiAxisWidget;
+    SigmaSetitngWidget *sigmaWidget;
+    TechnohandsSettingWidget *technoWidget;
     StageWidget *shutterWidget;
-
-    void initialTabs();
-    StageWidget* createTabWithTitle(QString);
 };
 
 #endif // STAGESETTINGDIALOG_H

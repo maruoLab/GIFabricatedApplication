@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -44,13 +44,19 @@ private slots:
     void on_actionStageSetting_triggered();
     void on_actionCanOpenStage_triggered();
 
+    void on_actionStop_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     int transactionCount;
 
-    QLabel *xLabel, *yLabel, *shutterLabel;
-    QLabel *xStatusLabel, *yStatusLabel, *shutterStatusLabel;
+    QLabel *sigmaLabel,
+    *technoPhiLabel, *technoZLabel,*technoThetaLabel,
+    *shutterLabel;
+    QLabel *sigmaStatusLabel,
+    *technoStatusPhiLabel, *technoStatusZLabel,*technoStatusThetaLabel,
+    *shutterStatusLabel;
     StageSettingDialog *settingDialog;
     ConvertPanel *convertTab;
     EditorPanel *editorTab;

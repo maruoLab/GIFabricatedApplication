@@ -1,4 +1,4 @@
-#ifndef STAGECONTROLLER_H
+﻿#ifndef STAGECONTROLLER_H
 #define STAGECONTROLLER_H
 
 #include <QObject>
@@ -6,6 +6,8 @@
 
 #include "enumList.h"
 
+class SigmaStage;
+class TechnoStage;
 class Stage;
 class Shutter;
 
@@ -20,15 +22,19 @@ public:
 
     EnumList::StageShutter e;
     float x, y, z;
+    float theta, phi;
     float f;
 
-    Stage *xStage, *yStage;
+    SigmaStage *sigmaStage;
+    TechnoStage *phiStage, *zSupplyStage, *thetaSupplyStage;
     Shutter *shutter;
 
     void loadStageSettings(const QJsonObject &json);
     void getStagePositions(EnumList::Axis axis);
     void moveHome(EnumList::Axis axis);
     void move(EnumList::Axis axis, float value,bool isAbsolute);
+    void supplyAction();
+    void stopStages();
 
     void pressTheShutter(bool isOpen);
 
@@ -38,11 +44,8 @@ public:
 public slots:
     void receiveDebugMessage(QString s);
 
-signals:
-    void sendDebugMessage(QString s);
-
 private:
-    QMap<int, QString> stagePositionList;
+    QMap<EnumList::Axis, float> sigmaPositionMap;
 
 };
 

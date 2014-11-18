@@ -15,11 +15,15 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-  ,xLabel(new QLabel(tr("x : ")))
-  ,yLabel(new QLabel(tr("y : ")))
+  ,sigmaLabel(new QLabel(tr("Sigma : ")))
+  ,technoPhiLabel(new QLabel(tr("Techno Φ: ")))
+  ,technoZLabel(new QLabel(tr("tZ : ")))
+  ,technoThetaLabel(new QLabel(tr("tθ")))
   ,shutterLabel(new QLabel("shutter:"))
-  ,xStatusLabel(new QLabel(tr("Not connecting")))
-  ,yStatusLabel(new QLabel(tr("Not connecting")))
+  ,sigmaStatusLabel(new QLabel(tr("Not connecting")))
+  ,technoStatusPhiLabel(new QLabel(tr("Notconnecting")))
+  ,technoStatusZLabel(new QLabel(tr("Notconnecting")))
+  ,technoStatusThetaLabel(new QLabel(tr("Notconnecting")))
   ,shutterStatusLabel(new QLabel("Not connecting"))
 
 {
@@ -64,6 +68,7 @@ void MainWindow::setMenu()
 
 void MainWindow::on_actionStageSetting_triggered()
 {
+    loadStageSettings(Json);
     settingDialog->exec();
 }
 
@@ -71,8 +76,11 @@ void MainWindow::on_actionCanOpenStage_triggered()
 {
     // get serial communication status
     canOpenStageList = printTab->stageManager.canOpenStages();
-    xStatusLabel->setText(canOpenStageList[EnumList::x]);
-    yStatusLabel->setText(canOpenStageList[EnumList::y]);
+    technoStatusZLabel->setText(canOpenStageList[EnumList::zSupply]);
+    technoStatusThetaLabel->setText(canOpenStageList[EnumList::thetaSupply]);
+    technoStatusPhiLabel->setText(canOpenStageList[EnumList::phi]);
+    sigmaStatusLabel->setText(canOpenStageList[EnumList::sigma]);
+//    yStatusLabel->setText(canOpenStageList[EnumList::y]);
     shutterStatusLabel->setText(canOpenStageList[EnumList::shutter]);    
 }
 
@@ -113,12 +121,16 @@ void MainWindow::applySettings()
 void MainWindow::defaultSettings()
 {
     //Status bar
-    ui->statusBar->addPermanentWidget(xLabel, 0);
-    ui->statusBar->addPermanentWidget(xStatusLabel, 10);
-    ui->statusBar->addPermanentWidget(yLabel, 0);
-    ui->statusBar->addPermanentWidget(yStatusLabel, 10);
+    ui->statusBar->addPermanentWidget(sigmaLabel, 0);
+    ui->statusBar->addPermanentWidget(sigmaStatusLabel, 10);
+    ui->statusBar->addPermanentWidget(technoPhiLabel, 0);
+    ui->statusBar->addPermanentWidget(technoStatusPhiLabel, 0);
+    ui->statusBar->addPermanentWidget(technoZLabel, 0);
+    ui->statusBar->addPermanentWidget(technoStatusZLabel, 0);
+    ui->statusBar->addPermanentWidget(technoThetaLabel, 0);
+    ui->statusBar->addPermanentWidget(technoStatusThetaLabel, 10);
     ui->statusBar->addPermanentWidget(shutterLabel, 0);
-    ui->statusBar->addPermanentWidget(shutterStatusLabel, 10);
+    ui->statusBar->addPermanentWidget(shutterStatusLabel, 0);
 
     // create Dialog
     settingDialog = new StageSettingDialog(this);
@@ -136,8 +148,9 @@ void MainWindow::defaultSettings()
     ui->tabWidget->setCurrentIndex(1);
 
     /* SIGNALS & SLOTS*/
-    connect(convertTab, SIGNAL(sendGcodeText(QList<GCode*>)), editorTab, SLOT(receiveGcodeText(QList<GCode*>)));
+    connect(convertTab, SIGNAL(sendGcodeText(QString)), editorTab, SLOT(receiveGcodeText(QString)));
     connect(editorTab, SIGNAL(sendGCodeListToGraphicArea(QList<GCode*>)), ui->graphicWidget, SLOT(drawLines(QList<GCode*>)));
+    connect(editorTab, SIGNAL(changedCurrBlockNumber(int)), ui->graphicWidget, SLOT(changedCurrBlockNumber(int)));
 
 }
 
@@ -154,12 +167,12 @@ bool MainWindow::loadStageSettings(SaveFormat saveFormat)
                    : QStringLiteral("save.dat"));
     if (!loadFile.open(QIODevice::ReadOnly))
     {
-        qWarning("Couldn't open save file");
+//        qWarning("Couldn't open save file");
         qDebug("Couldn't open save file");
         return false;
     }else
     {
-        qDebug("Succeeded in opening save file");
+//        qDebug("Succeeded in opening save file");
     }
 
     QByteArray saveData = loadFile.readAll();
@@ -172,3 +185,7 @@ bool MainWindow::loadStageSettings(SaveFormat saveFormat)
     return true;
 }
 
+void MainWindow::on_actionStop_triggered()
+{
+    printTab->stageManager.stopStages();
+}
