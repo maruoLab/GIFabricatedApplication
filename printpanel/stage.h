@@ -4,7 +4,7 @@
 #include <QSerialPort>
 #include <QObject>
 
-#include "enumList.h"
+#include "../enumList.h"
 
 class QString;
 class QJsonObject;

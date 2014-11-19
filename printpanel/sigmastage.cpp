@@ -1,5 +1,5 @@
 ﻿#include "sigmastage.h"
-#include "model/responseanalyzer.h"
+#include "../model/responseanalyzer.h"
 
 #include <QDebug>
 #include <QJsonObject>

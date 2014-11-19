@@ -1,7 +1,7 @@
 ﻿#include "technohandssettingwidget.h"
 #include "ui_technohandssettingwidget.h"
-#include "printpanel/stagewidget.h"
-#include "EnumList.h"
+#include "../printpanel/stagewidget.h"
+#include "../EnumList.h"
 
 #include <QJsonObject>
 

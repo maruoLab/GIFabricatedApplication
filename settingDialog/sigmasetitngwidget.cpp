@@ -1,6 +1,6 @@
 ﻿#include "sigmasetitngwidget.h"
 #include "ui_sigmasetitngwidget.h"
-#include "EnumList.h"
+#include "../EnumList.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>

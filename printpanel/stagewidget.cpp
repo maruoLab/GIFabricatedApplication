@@ -1,5 +1,5 @@
 ﻿#include "stagewidget.h"
-#include "EnumList.h"
+#include "../EnumList.h"
 
 #include <QSerialPort>
 #include <QSerialPortInfo>

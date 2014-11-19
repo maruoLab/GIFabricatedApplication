@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 
-#include "enumList.h"
+#include "../enumList.h"
 
 class SigmaStage;
 class TechnoStage;

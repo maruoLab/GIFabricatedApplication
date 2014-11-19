@@ -1,5 +1,5 @@
 ﻿#include "technostage.h"
-#include "model/responseanalyzer.h"
+#include "../model/responseanalyzer.h"
 
 #include <QDebug>
 

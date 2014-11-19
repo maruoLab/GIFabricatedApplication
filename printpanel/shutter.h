@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 
-#include "enumList.h"
+#include "../enumList.h"
 #include "stage.h"
 
 class Shutter : public Stage

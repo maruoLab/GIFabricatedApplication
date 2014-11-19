@@ -4,8 +4,8 @@
 #include <QWidget>
 
 #include "stagecontroller.h"
-#include "enumList.h"
-#include "model/gcode.h"
+#include "../enumList.h"
+#include "../model/gcode.h"
 
 namespace Ui {
 class PrintPanel;

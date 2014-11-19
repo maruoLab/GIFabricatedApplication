@@ -1,6 +1,6 @@
 ﻿#include "stagecontroller.h"
-#include "enumList.h"
-#include "model/responseanalyzer.h"
+#include "../enumList.h"
+#include "../model/responseanalyzer.h"
 #include "sigmastage.h"
 #include "technostage.h"
 #include "stage.h"

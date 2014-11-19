@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "model/gcode.h"
+#include "../model/gcode.h"
 
 namespace Ui {
 class EditorPanel;

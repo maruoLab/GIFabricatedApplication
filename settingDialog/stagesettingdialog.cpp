@@ -1,9 +1,9 @@
 ﻿#include "stagesettingdialog.h"
 #include "ui_stagesettingdialog.h"
-#include "printpanel/stagewidget.h"
-#include "settingDialog/sigmasetitngwidget.h"
-#include "settingDialog/technohandssettingwidget.h"
-#include "EnumList.h"
+#include "../printpanel/stagewidget.h"
+#include "../settingDialog/sigmasetitngwidget.h"
+#include "../settingDialog/technohandssettingwidget.h"
+#include "../EnumList.h"
 
 #include <QSerialPortInfo>
 #include <QDebug>

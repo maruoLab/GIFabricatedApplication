@@ -5,7 +5,7 @@
 #include <QMap>
 
 #include "float.h"
-#include "EnumList.h"
+#include "../EnumList.h"
 
 class ResponseAnalyzer : public QObject
 {

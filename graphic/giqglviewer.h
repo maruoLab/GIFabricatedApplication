@@ -2,8 +2,8 @@
 #define GIQGLVIEWER_H
 
 #include <QGLViewer/qglviewer.h>
-#include "model/gcode.h"
-#include "model/lines.h"
+#include "../model/gcode.h"
+#include "../model/lines.h"
 
 class GIQGLViewer : public QGLViewer
 {

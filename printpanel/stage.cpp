@@ -1,5 +1,5 @@
 ﻿#include "stage.h"
-#include "model/responseanalyzer.h"
+#include "../model/responseanalyzer.h"
 
 #include <QJsonObject>
 #include <QDebug>

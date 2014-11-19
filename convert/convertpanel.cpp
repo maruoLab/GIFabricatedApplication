@@ -1,6 +1,6 @@
 ﻿#include "convertpanel.h"
 #include "ui_convertpanel.h"
-#include "model/gcode.h"
+#include "../model/gcode.h"
 
 #include <QFileDialog>
 #include <QDebug>

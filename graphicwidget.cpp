@@ -8,11 +8,11 @@
 GraphicWidget::GraphicWidget(QWidget *parent) :
     QWidget(parent)
 {
-    viewer = new GIQGLViewer();
-    QGridLayout* layout = new QGridLayout();
-    layout->addWidget(viewer);
+//    viewer = new GIQGLViewer();
+//    QGridLayout* layout = new QGridLayout();
+//    layout->addWidget(viewer);
 
-    setLayout(layout);
+//    setLayout(layout);
 }
 
 void GraphicWidget::drawLines(QList<GCode*> gcodeList)
