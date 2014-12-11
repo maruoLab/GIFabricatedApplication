@@ -31,9 +31,9 @@ void StageController::loadStageSettings(const QJsonObject &json)
     thetasJson  = json[technoKey].toObject()[thetaSuppliedKey].toObject();
     shutterJson = json[shutterKey].toObject();
 
-    if ( sigmaJson[axis1Key].toInt() != 0 |
-         sigmaJson[axis2Key].toInt() != 0 |
-         sigmaJson[axis3Key].toInt() != 0 |
+    if ( sigmaJson[axis1Key].toInt() != 0 ||
+         sigmaJson[axis2Key].toInt() != 0 ||
+         sigmaJson[axis3Key].toInt() != 0 ||
          sigmaJson[axis4Key].toInt() != 0
         )
     {

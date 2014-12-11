@@ -39,12 +39,16 @@ public:
 
 public slots:
     void applySettings();
+    void on_actionGCode_triggered();
 
 private slots:
     void on_actionStageSetting_triggered();
     void on_actionCanOpenStage_triggered();
-
     void on_actionStop_triggered();
+
+    void on_actionOpenGCode_triggered();
+
+    void on_actionSave_GCode_triggered();
 
 private:
     Ui::MainWindow *ui;
