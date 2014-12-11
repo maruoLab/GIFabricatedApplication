@@ -27,11 +27,10 @@ signals:
 
 public slots:
     void receiveGcodeText(QString gcodeText);
-
-private slots:
     void on_openGcodeButton_clicked();
     void on_saveGcodeButton_clicked();
 
+private slots:
     void on_mainTextEdit_cursorPositionChanged();
     void on_mainTextEdit_textChanged();
 
@@ -39,6 +38,7 @@ private:
     Ui::EditorPanel *ui;
     int currentBlockNumber;
     bool isChangeText;
+    QString openedFileName;
 };
 
 #endif // EDITORPANEL_H
